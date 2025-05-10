@@ -9,10 +9,12 @@ interface ProductoCreateBody {
   categoria_Id: number;
 }
 
+interface ProductoUpdateBody extends Partial<ProductoCreateBody> {}
+
 export const getAllProductos = async (
   req: Request,
   res: Response,
-): Promise<Response> => {
+): Promise<any> => {
   try {
     const productos = await Producto.findAll();
     return res.status(200).json({ success: true, data: productos });

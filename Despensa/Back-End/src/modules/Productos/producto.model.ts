@@ -12,7 +12,7 @@ interface ProductoAttributes {
 }
 
 interface ProductoCreacionAttributes
-  extends Optional<ProductoAttributes, 'id' | 'created_at' | 'updated_at'> {}
+  extends Optional<ProductoAttributes, 'id'> {}
 
 class Producto
   extends Model<ProductoAttributes, ProductoCreacionAttributes>
@@ -60,9 +60,8 @@ Producto.init(
     sequelize,
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: 'updated_at',
   },
 );
 
 export default Producto;
-

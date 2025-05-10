@@ -39,7 +39,7 @@ Categoria.init(
     },
   },
   {
-    tableName: 'categorias',
+    tableName: 'categoria',
     sequelize,
   },
 );
