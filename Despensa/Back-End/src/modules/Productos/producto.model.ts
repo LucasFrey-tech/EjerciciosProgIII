@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { sequelize } from '../Productos/db-config';
+import { sequelize } from './db-config';
 interface ProductoAttributes {
   id: number;
   nombre?: string;
@@ -7,12 +7,12 @@ interface ProductoAttributes {
   fecha_compra?: Date;
   fecha_vec?: Date;
   categoria_id?: number;
-  created_At?: Date;
-  updated_At?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 interface ProductoCreacionAttributes
-  extends Optional<ProductoAttributes, 'id' | 'created_At' | 'updated_At'> {}
+  extends Optional<ProductoAttributes, 'id' | 'created_at' | 'updated_at'> {}
 
 class Producto
   extends Model<ProductoAttributes, ProductoCreacionAttributes>
@@ -23,8 +23,8 @@ class Producto
   public cant_almacenada?: number;
   public readonly fecha_compra!: Date;
   public readonly fecha_vec!: Date;
-  public readonly created_At?: Date;
-  public readonly updated_At?: Date;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
 }
 
 Producto.init(
@@ -50,15 +50,19 @@ Producto.init(
     categoria_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'categorias', // nombre exacto de la tabla
+        model: 'categoria', // nombre exacto de la tabla
         key: 'id',
       },
     },
   },
   {
-    tableName: 'productos',
+    tableName: 'producto',
     sequelize,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   },
 );
 
 export default Producto;
+

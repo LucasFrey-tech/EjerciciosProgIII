@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Producto from '../Productos/producto.model';
+import Producto from './producto.model';
 
 interface ProductoCreateBody {
   nombre: string;
@@ -9,12 +9,10 @@ interface ProductoCreateBody {
   categoria_Id: number;
 }
 
-//interface productoUpdateBody extends Partial<ProductoCreateBody> {}
-
 export const getAllProductos = async (
   req: Request,
   res: Response,
-): Promise<any> => {
+): Promise<Response> => {
   try {
     const productos = await Producto.findAll();
     return res.status(200).json({ success: true, data: productos });
