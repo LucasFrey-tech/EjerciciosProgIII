@@ -22,7 +22,7 @@ export const getAllProductos = async (
     console.error('Error al obtener los productos:', error);
     return res.status(500).json({
       success: false,
-      massage: 'Error al obtener los productos',
+      message: 'Error al obtener los productos',
       error: (error as Error).message,
     });
   }

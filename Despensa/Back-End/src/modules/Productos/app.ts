@@ -1,7 +1,7 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
+import { Request, Response } from 'express';
+import * as express from 'express';
 import { testConnection } from '../Productos/db-config';
-import productoRoutes from '../Productos/producto.routes';
+import productoRoutes from './producto.routes';
 
 // Tipos para el manejo de errores
 interface AppError extends Error {
@@ -13,7 +13,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,11 +49,6 @@ app.use((err: AppError, req: Request, res: Response) => {
     message: 'Error en el servidor',
     error: err.message,
   });
-});
-
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
 // Para manejo adecuado de tipos en TypeScript para exports
