@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Producto from './producto.model';
+import Categoria from '../Categorias/categoria.model';
 
 interface ProductoCreateBody {
   nombre: string;
@@ -16,7 +17,15 @@ export const getAllProductos = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const productos = await Producto.findAll();
+    const productos = await Producto.findAll({
+      include: [
+        {
+          model: Categoria,
+          as: 'categoria', // El alias debe coincidir con el definido en la relación
+          attributes: ['nombre', 'descripcion'], // Selecciona solo los campos que necesitas
+        },
+      ],
+    });
     return res.status(200).json({ success: true, data: productos });
   } catch (error) {
     console.error('Error al obtener los productos:', error);
