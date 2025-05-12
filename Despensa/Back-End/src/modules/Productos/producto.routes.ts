@@ -1,8 +1,12 @@
-import { Router } from 'express'; // Importa Router directamente
+import { Router } from 'express';
 import * as productosController from './producto.controller';
 
-const router = Router(); // Usa Router sin necesidad de express.Router()
+const router = Router();
 
 router.get('/', productosController.getAllProductos);
+router.get('/:id', productosController.getProductoById);
+router.post('/', productosController.createProducto);
+router.put('/:id', productosController.updateProducto);
+router.delete('/:id', productosController.deleteProducto);
 
 export default router;

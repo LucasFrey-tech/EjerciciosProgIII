@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { sequelize } from './db-config';
+import { sequelize } from '../../../database/db-config';
 interface ProductoAttributes {
   id: number;
   nombre?: string;
@@ -50,7 +50,7 @@ Producto.init(
     categoria_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'categoria', // nombre exacto de la tabla
+        model: 'categoria',
         key: 'id',
       },
     },

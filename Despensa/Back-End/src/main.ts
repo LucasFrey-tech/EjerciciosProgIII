@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as express from 'express';
-import { testConnection } from './modules/Productos/db-config';
+import { testConnection } from '../database/db-config';
 import productoRoutes from './modules/Productos/producto.routes';
 import * as cors from 'cors';
 
