@@ -1,5 +1,4 @@
 'use client';
-// import styles from './Home.module.css';
 import styles from './estilo.module.css';
 import { useEffect, useState } from 'react';
 
@@ -13,48 +12,8 @@ interface Producto {
   created_at: Date;
   updated_at: Date;
 }
-
-/*
-export default function Home() {
-  return (
-   
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <h1 className={styles.logo}>Despensa</h1>
-        </header>
-
-        <main className={styles.main}>
-        <div className={styles.grid}>
-          { header de la tabla }
-          <div className={`${styles.cell} ${styles.headerCell}`}>ID</div>
-          <div className={`${styles.cell} ${styles.headerCell}`}>Nombre</div>
-          <div className={`${styles.cell} ${styles.headerCell}`}>Cantidad</div>
-          <div className={`${styles.cell} ${styles.headerCell}`}>Fecha de Compra</div>
-          <div className={`${styles.cell} ${styles.headerCell}`}>Fecha de Vencimiento</div>
-          <div className={`${styles.cell} ${styles.headerCell}`}>Categoria</div>
-          <div className={`${styles.cell} ${styles.headerCell}`}>Descripcion</div>
-
-          { Celdas vacias para llenar despues }
-          <div className={styles.cell}></div>
-          <div className={styles.cell}></div>
-          <div className={styles.cell}></div>
-          <div className={styles.cell}></div>
-          <div className={styles.cell}></div>
-          <div className={styles.cell}></div>
-          <div className={styles.cell}></div>
-
-        </div>
-      </main>
-      </div>
-
-   
-  );
-}
-*/
-
 export default function TablaPersonas() {
   const [productos, setProductos] = useState<Producto[]>([]);
-
   useEffect(() => {
     fetch('http://localhost:3001/api/productos') // ⚠️ Asegurate de usar el puerto correcto
       .then(res => res.json())
@@ -71,6 +30,7 @@ export default function TablaPersonas() {
         <h1 className={styles.logo}>Despensa</h1>
       </header>
 
+    
       <table className={styles.main}>
         <thead className={styles.grid}>
           <tr>
@@ -98,6 +58,7 @@ export default function TablaPersonas() {
     </div>
   );
 }
+
 
 /*const [loading, setLoading] = useState(true);
 
