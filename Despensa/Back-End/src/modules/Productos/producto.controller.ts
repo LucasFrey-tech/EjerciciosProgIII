@@ -9,12 +9,12 @@ interface ProductoCreateBody {
   categoria_Id: number;
 }
 
-interface ProductoUpdateBody extends Partial<ProductoCreateBody> {}
+interface ProductoUpdateBody extends Partial<ProductoCreateBody> { }
 
 export const getAllProductos = async (
   req: Request,
   res: Response,
-): Promise<any> => {
+): Promise<Response> => {
   try {
     const productos = await Producto.findAll();
     return res.status(200).json({ success: true, data: productos });
@@ -33,18 +33,18 @@ export const getProductoById = async (req: Request, res: Response): Promise<Resp
   try {
     const producto = await Producto.findByPk(req.params.id);
     if (!producto) {
-      return res.status(404).json({ 
-        success: false, 
+      return res.status(404).json({
+        success: false,
         message: 'Producto no encontrado'
       });
     }
     return res.status(200).json({ success: true, data: producto });
   } catch (error) {
     console.error(`Error al obtener producto con ID ${req.params.id}:`, error);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error al obtener producto', 
-      error: (error as Error).message 
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener producto',
+      error: (error as Error).message
     });
   }
 };
@@ -53,27 +53,27 @@ export const getProductoById = async (req: Request, res: Response): Promise<Resp
 export const createProducto = async (req: Request, res: Response): Promise<Response> => {
   try {
     const body = req.body as ProductoCreateBody;
-    
+
     // Validación básica
     if (!body.nombre) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Se requiere nombre del producto.' 
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere nombre del producto.'
       });
     }
 
     const nuevoProducto = await Producto.create(body);
-    return res.status(201).json({ 
-      success: true, 
-      message: 'Producto creado exitosamente', 
-      data: nuevoProducto 
+    return res.status(201).json({
+      success: true,
+      message: 'Producto creado exitosamente',
+      data: nuevoProducto
     });
   } catch (error) {
     console.error('Error al crear el producto:', error);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error al crear el producto', 
-      error: (error as Error).message 
+    return res.status(500).json({
+      success: false,
+      message: 'Error al crear el producto',
+      error: (error as Error).message
     });
   }
 };
@@ -92,17 +92,17 @@ export const updateProducto = async (req: Request, res: Response): Promise<Respo
     }
 
     await producto.update(body);
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Producto actualizado exitosamente', 
-      data: producto 
+    return res.status(200).json({
+      success: true,
+      message: 'Producto actualizado exitosamente',
+      data: producto
     });
   } catch (error) {
     console.error(`Error al actualizar producto con ID ${req.params.id}:`, error);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error al actualizar producto', 
-      error: (error as Error).message 
+    return res.status(500).json({
+      success: false,
+      message: 'Error al actualizar producto',
+      error: (error as Error).message
     });
   }
 };
@@ -112,23 +112,23 @@ export const deleteProducto = async (req: Request, res: Response): Promise<Respo
   try {
     const producto = await Producto.findByPk(req.params.id);
     if (!producto) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Producto no encontrado' 
+      return res.status(404).json({
+        success: false,
+        message: 'Producto no encontrado'
       });
     }
 
     await producto.destroy();
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Producto eliminado exitosamente' 
+    return res.status(200).json({
+      success: true,
+      message: 'Producto eliminado exitosamente'
     });
   } catch (error) {
     console.error(`Error al eliminar producto con ID ${req.params.id}:`, error);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error al eliminar producto', 
-      error: (error as Error).message 
+    return res.status(500).json({
+      success: false,
+      message: 'Error al eliminar producto',
+      error: (error as Error).message
     });
   }
 };

@@ -5,12 +5,10 @@ interface CategoriaAttributes {
   id: number;
   nombre?: string;
   descripcion?: string;
-  created_At?: Date;
-  updated_At?: Date;
 }
 
 interface CategoriaCreacionAttributes
-  extends Optional<CategoriaAttributes, 'id' | 'created_At' | 'updated_At'> {}
+  extends Optional<CategoriaAttributes, 'id'> {}
 
 class Categoria
   extends Model<CategoriaAttributes, CategoriaCreacionAttributes>
@@ -19,8 +17,6 @@ class Categoria
   public id!: number;
   public nombre?: string;
   public descripcion?: string;
-  public readonly created_At?: Date;
-  public readonly updated_At?: Date;
 }
 
 Categoria.init(
