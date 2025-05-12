@@ -19,17 +19,19 @@
   color: #ffffff;
 }
 /*-----------------*/
-
 /*Productos*/
-
 .main {
     margin-top: 0.5vw;
 }
 
+.headerCell {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
 .grid {
-  grid-template-columns: repeat(6, 1fr); 
-  gap: 4px;  
-  width: 100%;
+  grid-template-columns: repeat(6, 1fr);  
+  width: 90%;
   height: 100%;
   max-width: 100vw; 
   max-height: 100vw; 
@@ -39,15 +41,20 @@
 }
 
 .cell {
-    color: black;
+  color: black;
   padding: 20px; 
   border: 1px solid #ccc;
   text-align: center;
   background-color: rgb(184, 184, 184); 
 }
 
-.headerCell {
-  width: 100%;
-  background-color: #f0f0f0;
-  font-weight: bold;
+.main {
+  display: flex;
+}
+
+.flexRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* O `flex-start` si quieres que el SVG esté justo al lado */
+  gap: 0.5rem; /* Opcional: espacio entre texto e ícono */
 }
