@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { sequelize } from '../Productos/db-config';
+import { sequelize } from '../../../database/db-config';
 
 interface CategoriaAttributes {
   id: number;
