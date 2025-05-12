@@ -27,7 +27,6 @@
 }
 
 .grid {
-
   grid-template-columns: repeat(6, 1fr); 
   gap: 4px;  
   width: 100%;
@@ -48,6 +47,7 @@
 }
 
 .headerCell {
+  width: 100%;
   background-color: #f0f0f0;
   font-weight: bold;
 }

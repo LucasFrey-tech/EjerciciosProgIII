@@ -26,34 +26,20 @@ export default function TablaPersonas() {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.logo}>Despensa</h1>
+      <header className={styles.header}>   
+       {/*LOGO*/ }  
+      <h1 className={styles.logo}>Despensa</h1>
       </header>
-
-    
       <table className={styles.main}>
-        <thead className={styles.grid}>
-          <tr>
-            <th className={`${styles.cell} ${styles.headerCell}`}>ID</th>
-            <th className={`${styles.cell} ${styles.headerCell}`}>Nombre</th>
-            <th className={`${styles.cell} ${styles.headerCell}`}>Cantidad Almacenada</th>
-            <th className={`${styles.cell} ${styles.headerCell}`}>Fecha Compra</th>
-            <th className={`${styles.cell} ${styles.headerCell}`}>Fecha Vencimiento</th>
-            <th className={`${styles.cell} ${styles.headerCell}`}>Categoria</th>
-          </tr>
-        </thead>
-        <tbody className={"--"}>
-          {productos.map(p => (
-            <tr key={p.id}>
-              <td className={styles.cell}>{p.id}</td>
-              <td className={styles.cell}>{p.nombre}</td>
-              <td className={styles.cell}>{p.cant_almacenada}</td>
-              <td className={styles.cell}>{new Date(p.fecha_compra).toLocaleDateString()}</td>
-              <td className={styles.cell}>{new Date(p.fecha_vec).toLocaleDateString()}</td>
-              <td className={styles.cell}>{p.categoria_id}</td>
-            </tr>
-          ))}
-        </tbody>
+        {productos.map(p => (
+           <tr key={p.id}>
+          <td className={styles.cell}>{p.nombre}</td>
+           </tr>
+
+        ) )
+
+        }
+        
       </table>
     </div>
   );
