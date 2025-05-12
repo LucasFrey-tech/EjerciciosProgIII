@@ -53,3 +53,11 @@
 }
 
 /*-----------------*/
+
+.table{
+  background-color: red;
+}
+
+.tbody{
+  background-color: green;
+}
