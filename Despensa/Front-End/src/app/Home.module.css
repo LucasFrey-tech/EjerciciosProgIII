@@ -27,19 +27,22 @@
 }
 
 .cell {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   color: black;
   padding: 20px; 
   border: 1px solid #ccc;
   background-color: rgb(184, 184, 184); 
 }
 
+.flexRow {
+  display: flex;
+  justify-content: space-between; /* Separar nombre y flecha */
+  align-items: center;
+  width: 100%;
+}
+
 .nombreProducto {
-  display:flex;
-  flex-grow: 1;
-  justify-content: center;
+  text-align: center;
+  flex: 1;
   text-transform: capitalize;
 }
 
@@ -47,10 +50,7 @@
   width: 2vw;
   height: 2vw;
   cursor: pointer;
-<<<<<<< HEAD
   transition: transform 0.3s ease;
-=======
->>>>>>> 6e71c9267e356d7dee8f2bc582ad21f643e4de39
 }
 
 .rotated {
