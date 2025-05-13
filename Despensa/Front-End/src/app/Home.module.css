@@ -33,15 +33,20 @@
   background-color: rgb(184, 184, 184); 
 }
 
+.cellDetails {
+  color: black;
+  padding: 20px;
+  border: 1px solid rgb(62, 62, 62); 
+  background-color: rgb(150, 149, 149); 
+}
+
 .categoryDetails {
   display: grid;
-  
   grid-template-columns: repeat(2,50%);
-
 }
 
 .categoryDetails span{
-  border: solid 2px;
+  border: solid 1px;
   align-content: center;
   padding: 2px;
 }
@@ -60,8 +65,8 @@
 }
 
 .flechita {
-  width: 2vw;
-  height: 2vw;
+  width: 1vw;
+  height: 1vw;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
@@ -74,7 +79,6 @@
   transition: all 0.3s ease;
   max-height: 0;
   overflow: hidden;
-  background-color: red;
 }
 
 .detailRow[style*="display: table-row"] {
@@ -85,4 +89,41 @@
 .detailTableWrapper {
   opacity: 1;
   transition: opacity 0.3s ease;
+}
+
+/* Responsive para pantallas chicas */
+@media (max-width: 600px) {
+  .logo {
+    font-size: 6vw;
+  }
+
+  .cell {
+    font-size: 3vw;
+    padding: 2vw;
+  }
+  
+  .flechita {
+  width: 2.5vw;
+  height: 2.5vw;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 601px) {
+  .logo {
+    font-size: 5vw;
+  }
+
+  .cell {
+    font-size: 2vw;
+    padding: 2vw;
+  }
+
+  .flechita {
+  width: 2.5vw;
+  height: 2.5vw;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  }
 }

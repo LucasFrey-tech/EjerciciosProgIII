@@ -78,22 +78,22 @@ export default function TablaPersonas() {
                       <table className={styles.main}>
                         <thead className={styles.grid}>
                           <tr>
-                            <th className={`${styles.cell} ${styles.headerCell}`}>ID</th>
-                            <th className={`${styles.cell} ${styles.headerCell}`}>Nombre</th>
-                            <th className={`${styles.cell} ${styles.headerCell}`}>Cantidad Almacenada</th>
-                            <th className={`${styles.cell} ${styles.headerCell}`}>Fecha Compra</th>
-                            <th className={`${styles.cell} ${styles.headerCell}`}>Fecha Vencimiento</th>
-                            <th className={`${styles.cell} ${styles.headerCell}`}>Categoria</th>
+                            <th className={styles.cellDetails}>ID</th>
+                            <th className={styles.cellDetails}>Nombre</th>
+                            <th className={styles.cellDetails}>Cantidad Almacenada</th>
+                            <th className={styles.cellDetails}>Fecha Compra</th>
+                            <th className={styles.cellDetails}>Fecha Vencimiento</th>
+                            <th className={styles.cellDetails}>Categoria</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <td className={styles.cell}>{p.id}</td>
-                            <td className={styles.cell}>{p.nombre}</td>
-                            <td className={styles.cell}>{p.cant_almacenada}</td>
-                            <td className={styles.cell}>{new Date(p.fecha_compra).toLocaleDateString()}</td>
-                            <td className={styles.cell}>{new Date(p.fecha_vec).toLocaleDateString()}</td>
-                            <td className={styles.cell}>
+                            <td className={styles.cellDetails}>{p.id}</td>
+                            <td className={styles.cellDetails}>{p.nombre}</td>
+                            <td className={styles.cellDetails}>{p.cant_almacenada}</td>
+                            <td className={styles.cellDetails}>{new Date(p.fecha_compra).toLocaleDateString()}</td>
+                            <td className={styles.cellDetails}>{new Date(p.fecha_vec).toLocaleDateString()}</td>
+                            <td className={styles.cellDetails}>
                               <div className={styles.categoryDetails}>
                                 <span>{p.categoria.nombre}</span>
                                 <span>{p.categoria.descripcion}</span>
