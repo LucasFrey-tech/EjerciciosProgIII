@@ -3,13 +3,18 @@ import styles from '../Home.module.css';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
+interface Categoria {
+  nombre: string;
+  descripcion: string;
+}
+
 interface Producto {
   id: number;
   nombre: string;
   cant_almacenada: number;
   fecha_compra: Date;
   fecha_vec: Date;
-  categoria_id: number;
+  categoria: Categoria;
   created_at: Date;
   updated_at: Date;
 }
@@ -88,7 +93,12 @@ export default function TablaPersonas() {
                             <td className={styles.cell}>{p.cant_almacenada}</td>
                             <td className={styles.cell}>{new Date(p.fecha_compra).toLocaleDateString()}</td>
                             <td className={styles.cell}>{new Date(p.fecha_vec).toLocaleDateString()}</td>
-                            <td className={styles.cell}>{p.categoria_id}</td>
+                            <td className={styles.cell}>
+                              <div className={styles.categoryDetails}>
+                                <span>{p.categoria.nombre}</span>
+                                <span>{p.categoria.descripcion}</span>
+                              </div>
+                            </td>
                           </tr>
                         </tbody>
                       </table>

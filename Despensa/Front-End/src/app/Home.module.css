@@ -33,6 +33,19 @@
   background-color: rgb(184, 184, 184); 
 }
 
+.categoryDetails {
+  display: grid;
+  
+  grid-template-columns: repeat(2,50%);
+
+}
+
+.categoryDetails span{
+  border: solid 2px;
+  align-content: center;
+  padding: 2px;
+}
+
 .flexRow {
   display: flex;
   justify-content: space-between; /* Separar nombre y flecha */
@@ -61,6 +74,7 @@
   transition: all 0.3s ease;
   max-height: 0;
   overflow: hidden;
+  background-color: red;
 }
 
 .detailRow[style*="display: table-row"] {
