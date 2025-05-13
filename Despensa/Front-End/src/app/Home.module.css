@@ -4,7 +4,6 @@
   background-color: #f0f0f0;
 }
 
-
 /*HEADER*/
 .header {
   background-color: #0a0a0a;
@@ -51,5 +50,25 @@
   width: 2vw;
   height: 2vw;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
 
+.rotated {
+  transform: rotate(180deg);
+}
+
+.detailRow {
+  transition: all 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.detailRow[style*="display: table-row"] {
+  max-height: 500px; /* Adjust based on your table height */
+  opacity: 1;
+}
+
+.detailTableWrapper {
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
