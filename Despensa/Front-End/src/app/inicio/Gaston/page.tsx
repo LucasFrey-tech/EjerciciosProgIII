@@ -1,5 +1,5 @@
 'use client';
-import styles from './Home.module.css';
+import styles from '../../Home.module.css';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
