@@ -10,7 +10,7 @@ interface ProductoCreateBody {
   categoria_Id: number;
 }
 
-interface ProductoUpdateBody extends Partial<ProductoCreateBody> { }
+interface ProductoUpdateBody extends Partial<ProductoCreateBody> {}
 
 export const getAllProductos = async (
   req: Request,
@@ -38,13 +38,16 @@ export const getAllProductos = async (
 };
 
 // Obtener un producto por ID
-export const getProductoById = async (req: Request, res: Response): Promise<Response> => {
+export const getProductoById = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const producto = await Producto.findByPk(req.params.id);
     if (!producto) {
       return res.status(404).json({
         success: false,
-        message: 'Producto no encontrado'
+        message: 'Producto no encontrado',
       });
     }
     return res.status(200).json({ success: true, data: producto });
@@ -53,13 +56,16 @@ export const getProductoById = async (req: Request, res: Response): Promise<Resp
     return res.status(500).json({
       success: false,
       message: 'Error al obtener producto',
-      error: (error as Error).message
+      error: (error as Error).message,
     });
   }
 };
 
 // Crear un nuevo producto
-export const createProducto = async (req: Request, res: Response): Promise<Response> => {
+export const createProducto = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const body = req.body as ProductoCreateBody;
 
@@ -67,7 +73,7 @@ export const createProducto = async (req: Request, res: Response): Promise<Respo
     if (!body.nombre) {
       return res.status(400).json({
         success: false,
-        message: 'Se requiere nombre del producto.'
+        message: 'Se requiere nombre del producto.',
       });
     }
 
@@ -75,20 +81,23 @@ export const createProducto = async (req: Request, res: Response): Promise<Respo
     return res.status(201).json({
       success: true,
       message: 'Producto creado exitosamente',
-      data: nuevoProducto
+      data: nuevoProducto,
     });
   } catch (error) {
     console.error('Error al crear el producto:', error);
     return res.status(500).json({
       success: false,
       message: 'Error al crear el producto',
-      error: (error as Error).message
+      error: (error as Error).message,
     });
   }
 };
 
 //Actualizar un producto existente
-export const updateProducto = async (req: Request, res: Response): Promise<Response> => {
+export const updateProducto = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const body = req.body as ProductoUpdateBody;
     const producto = await Producto.findByPk(req.params.id);
@@ -96,7 +105,7 @@ export const updateProducto = async (req: Request, res: Response): Promise<Respo
     if (!producto) {
       return res.status(404).json({
         success: false,
-        message: 'Producto no encontrado'
+        message: 'Producto no encontrado',
       });
     }
 
@@ -104,40 +113,46 @@ export const updateProducto = async (req: Request, res: Response): Promise<Respo
     return res.status(200).json({
       success: true,
       message: 'Producto actualizado exitosamente',
-      data: producto
+      data: producto,
     });
   } catch (error) {
-    console.error(`Error al actualizar producto con ID ${req.params.id}:`, error);
+    console.error(
+      `Error al actualizar producto con ID ${req.params.id}:`,
+      error,
+    );
     return res.status(500).json({
       success: false,
       message: 'Error al actualizar producto',
-      error: (error as Error).message
+      error: (error as Error).message,
     });
   }
 };
 
 // Eliminar un producto
-export const deleteProducto = async (req: Request, res: Response): Promise<Response> => {
+export const deleteProducto = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const producto = await Producto.findByPk(req.params.id);
     if (!producto) {
       return res.status(404).json({
         success: false,
-        message: 'Producto no encontrado'
+        message: 'Producto no encontrado',
       });
     }
 
     await producto.destroy();
     return res.status(200).json({
       success: true,
-      message: 'Producto eliminado exitosamente'
+      message: 'Producto eliminado exitosamente',
     });
   } catch (error) {
     console.error(`Error al eliminar producto con ID ${req.params.id}:`, error);
     return res.status(500).json({
       success: false,
       message: 'Error al eliminar producto',
-      error: (error as Error).message
+      error: (error as Error).message,
     });
   }
 };
