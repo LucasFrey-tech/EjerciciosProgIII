@@ -3,6 +3,7 @@ import styles from './Home.module.css';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
+
 interface Categoria {
   nombre: string;
   descripcion: string;
@@ -23,6 +24,12 @@ export default function TablaPersonas() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [visibleDetails, setVisibleDetails] = useState<{ [key: number]: boolean }>({});
 
+  const [nombre, setNombre] = useState('');
+  const [cantAlmacenada, setCantAlmacenada] = useState('');
+  const [fechaCompra, setFechaCompra] = useState('');
+  const [fechaVencimiento, setFechaVencimiento] = useState('');
+  const [categoria, setCategoria] = useState('');
+
   useEffect(() => {
     fetch('http://localhost:3001/api/productos') // ⚠️ Asegurate de usar el puerto correcto
       .then(res => res.json())
@@ -40,12 +47,59 @@ export default function TablaPersonas() {
     }));
   };
 
+  const AgregarProducto = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/productos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre,
+          cant_almacenada: Number(cantAlmacenada),
+          fecha_compra: fechaCompra,
+          fecha_vec: fechaVencimiento,
+          categoria_nombre: categoria,
+        }),
+      });
+      const data = await response.json();
+      console.log('Respuesta del servidor:', JSON.stringify(data, null, 2));
+
+      if (!response.ok) {
+        alert(`Error: ${data.message}`);
+        return;
+      }
+
+      alert('Producto agregado exitosamente');
+
+      setProductos(prev => [...prev, data.data]);
+
+      // Limpiar inputs
+      setNombre('');
+      setCantAlmacenada('');
+      setFechaCompra('');
+      setFechaVencimiento('');
+      setCategoria('');
+    } catch (err) {
+      console.error('Error al agregar producto:', err);
+      alert('Error de red al agregar el producto');
+    }
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>   
         {/*LOGO*/ }  
         <h1 className={styles.logo}>Despensa</h1>
       </header>
+      <div className={styles.addProduct}>
+        <input className={styles.Input} type="text" placeholder="Nombre Producto" value={nombre} onChange={(e) => setNombre(e.target.value)}/>
+        <input className={styles.Input} type="number" placeholder="Cantidad a almacenar" value={cantAlmacenada} onChange={(e) => setCantAlmacenada(e.target.value)}/>
+        <input className={styles.Input} type="text" placeholder="Fecha de Compra" value={fechaCompra} onChange={(e) => setFechaCompra(e.target.value)}/>
+        <input className={styles.Input} type="text" placeholder="Fecha de Vencimiento" value={fechaVencimiento} onChange={(e => setFechaVencimiento(e.target.value))}/>
+        <input className={styles.Input} type="text" placeholder="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)}/>
+        <button className={styles.add} type="button" onClick={AgregarProducto}>Agregar producto</button>
+      </div>
       <table className={styles.main}>
         <tbody>
           {productos.map(p => (

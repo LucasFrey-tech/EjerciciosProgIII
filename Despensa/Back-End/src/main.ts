@@ -4,6 +4,7 @@ import { testConnection } from '../database/db-config';
 import productoRoutes from './modules/Productos/producto.routes';
 import * as cors from 'cors';
 import './modules/relaciones.model';
+import categoriaRoutes from './modules/Categorias/categoria.routes';
 
 // Tipos para el manejo de errores
 interface AppError extends Error {
@@ -28,12 +29,14 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Bienvenido a la API de la despensa',
     endpoints: {
       productos: '/api/productos',
+      categorias: '/api/categorias',
     },
   });
 });
 
 // Rutas de la API
 app.use('/api/productos', productoRoutes);
+app.use('/api/categorias', categoriaRoutes);
 
 // Middleware para manejar rutas no existentes
 app.use((req: Request, res: Response) => {

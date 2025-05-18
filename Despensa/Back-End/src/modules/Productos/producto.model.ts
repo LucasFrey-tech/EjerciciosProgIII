@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../../../database/db-config';
+import Categoria from '../Categorias/categoria.model';
 
 interface ProductoAttributes {
   id: number;
@@ -24,6 +25,7 @@ class Producto
   public cant_almacenada?: number;
   public readonly fecha_compra!: Date;
   public readonly fecha_vec!: Date;
+  public readonly categoria_id?: number;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 }
@@ -51,7 +53,7 @@ Producto.init(
     categoria_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'categoria', // nombre exacto de la tabla
+        model: Categoria,
         key: 'id',
       },
     },

@@ -4,12 +4,12 @@ DROP TABLE IF EXISTS categoria;
 CREATE TABLE IF NOT EXISTS categoria (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
-    descripcion VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS producto (
     id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     cant_Almacenada INTEGER NOT NULL,
     fecha_Compra DATE NOT NULL,
     fecha_Vec DATE NOT NULL,

@@ -4,10 +4,10 @@ import Categoria from '../Categorias/categoria.model';
 
 interface ProductoCreateBody {
   nombre: string;
-  cant_Almacenada: number;
-  fecha_Compra: Date;
-  fecha_vencimiento: Date;
-  categoria_Id: number;
+  cant_almacenada: number;
+  fecha_compra: Date;
+  fecha_vec: Date;
+  categoria_nombre: string;
 }
 
 interface ProductoUpdateBody extends Partial<ProductoCreateBody> {}
@@ -68,7 +68,7 @@ export const createProducto = async (
 ): Promise<Response> => {
   try {
     const body = req.body as ProductoCreateBody;
-
+    console.log('Cuerpo recibido:', JSON.stringify(body, null, 2));
     // Validación básica
     if (!body.nombre) {
       return res.status(400).json({
@@ -77,7 +77,41 @@ export const createProducto = async (
       });
     }
 
-    const nuevoProducto = await Producto.create(body);
+    const existente = await Producto.findOne({
+      where: { nombre: body.nombre },
+    });
+
+    if (existente) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ya existe un producto con ese nombre.',
+      });
+    }
+
+    const categoriaExistente = await Categoria.findOne({
+      where: { nombre: body.categoria_nombre },
+    });
+
+    console.log('Categoria buscada:', body.categoria_nombre);
+    console.log('Categoria encontrada:', categoriaExistente);
+
+    if (!categoriaExistente) {
+      return res.status(400).json({
+        success: false,
+        message: 'La categoría no existe. Por favor, créala primero.',
+      });
+    }
+
+    const nuevoProducto = await Producto.create({
+      nombre: body.nombre,
+      cant_almacenada: body.cant_almacenada,
+      fecha_compra: body.fecha_compra,
+      fecha_vec: body.fecha_vec,
+      categoria_id: categoriaExistente.id,
+    });
+
+    console.log('Producto creado:', JSON.stringify(nuevoProducto, null, 2));
+
     return res.status(201).json({
       success: true,
       message: 'Producto creado exitosamente',
@@ -85,6 +119,13 @@ export const createProducto = async (
     });
   } catch (error) {
     console.error('Error al crear el producto:', error);
+    if ((error as any).code === '23505') {
+      return res.status(400).json({
+        success: false,
+        message: 'Ya existe un producto con ese nombre.',
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: 'Error al crear el producto',
