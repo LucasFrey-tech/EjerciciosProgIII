@@ -107,10 +107,23 @@ export const createProducto = async (
       cant_almacenada: body.cant_almacenada,
       fecha_compra: body.fecha_compra,
       fecha_vec: body.fecha_vec,
-      categoria_id: categoriaExistente.id,
+      categoria_id: categoriaExistente.dataValues.id,
     });
 
     console.log('Producto creado:', JSON.stringify(nuevoProducto, null, 2));
+
+    const productoConCategoria = await Producto.findByPk(nuevoProducto.dataValues.id, {
+        include: [
+          {
+            model: Categoria,
+            as: 'categoria',
+            attributes: ['nombre', 'descripcion'],
+          },
+        ],
+      },
+    );
+
+    console.log('Respuesta enviada:', JSON.stringify(productoConCategoria?.toJSON(), null, 2));
 
     return res.status(201).json({
       success: true,
