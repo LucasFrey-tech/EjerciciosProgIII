@@ -100,6 +100,24 @@ export default function TablaPersonas() {
         <input className={styles.Input} type="text" placeholder="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)}/>
         <button className={styles.add} type="button" onClick={AgregarProducto}>Agregar producto</button>
       </div>
+        <div className={styles.filtros}>
+          Ordenar por
+          <button className={styles.filtrado}>
+            <span className={styles.tipoFiltro}>Filtro</span>
+            <svg 
+              className={`${styles.flechita} ${styles.rotated}`} 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 24 24" 
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd" 
+                d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" 
+                clipRule="evenodd" 
+              />
+            </svg>
+          </button>
+        </div>
       <table className={styles.main}>
         <tbody>
           {productos.map(p => (
@@ -129,6 +147,7 @@ export default function TablaPersonas() {
                 <tr className={styles.detailRow}>
                   <td colSpan={1}>
                     <div className={styles.detailTableWrapper}>
+                      <button className={styles.edit} type="button" >Editar</button>
                       <table className={styles.main}>
                         <thead className={styles.grid}>
                           <tr>
