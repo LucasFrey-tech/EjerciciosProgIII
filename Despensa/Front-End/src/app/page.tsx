@@ -20,22 +20,34 @@ interface Producto {
   updated_at: Date;
 }
 
-export default function TablaPersonas() {
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const [visibleDetails, setVisibleDetails] = useState<{ [key: number]: boolean }>({});
+/**
+ * Componente principal para la gestión de productos en despensa
+ * Permite visualizar, agregar y editar productos
+ * @returns {JSX.Element} Tabla de productos con formulario para agregar nuevos
+ */
 
-  const [nombre, setNombre] = useState('');
-  const [cantAlmacenada, setCantAlmacenada] = useState('');
-  const [fechaCompra, setFechaCompra] = useState('');
-  const [fechaVencimiento, setFechaVencimiento] = useState('');
-  const [categoria, setCategoria] = useState('');
+export default function TablaProductos() {
+  // Estados para almacenar los productos y controlar la visibilidad de detalles
+  const [productos, setProductos] = useState<Producto[]>([]); // Lista de productos obtenida de la API
+  const [visibleDetails, setVisibleDetails] = useState<{ [key: number]: boolean }>({}); // Control de visibilidad de detalles por ID
 
-  const [modoEdicion, setModoEdicion] = useState<{ [key: number]: boolean }>({})
-  const [productoEditado, setProductoEditado] = useState<{ [key: number]: Partial<Producto> }>({})
+  // Estados para el formulario de creación de productos
+  const [nombre, setNombre] = useState(''); // Nombre del nuevo producto
+  const [cantAlmacenada, setCantAlmacenada] = useState(''); // Cantidad almacenada del nuevo producto
+  const [fechaCompra, setFechaCompra] = useState(''); // Fecha de compra del nuevo producto
+  const [fechaVencimiento, setFechaVencimiento] = useState(''); // Fecha de vencimiento del nuevo producto
+  const [categoria, setCategoria] = useState(''); // Categoría del nuevo producto
 
+  // Estados para la edición de productos existentes
+  const [modoEdicion, setModoEdicion] = useState<{ [key: number]: boolean }>({}) // Control de modo edición por ID
+  const [productoEditado, setProductoEditado] = useState<{ [key: number]: Partial<Producto> }>({}) // Datos temporales durante edición
 
+  /**
+   * Efecto que se ejecuta al montar el componente
+   * Obtiene los productos desde el API y los almacena en el estado
+   */
   useEffect(() => {
-    fetch('http://localhost:3001/api/productos') // ⚠️ Asegurate de usar el puerto correcto
+    fetch('http://localhost:3001/api/productos')
       .then(res => res.json())
       .then(data => {
         console.log("Datos recibido:", data);
@@ -44,6 +56,11 @@ export default function TablaPersonas() {
       .catch(err => console.error('Error al hacer fetch:', err));
   }, []);
 
+   /**
+   * Alterna la visibilidad de los detalles de un producto
+   * @param {number} id - ID del producto cuyos detalles se mostrarán/ocultarán
+   * @utilizado cuando se hace clic en la flecha de un producto para expandir sus detalles
+   */
   const toggleDetails = (id: number) => {
     setVisibleDetails(prev => ({
       ...prev,
@@ -51,6 +68,11 @@ export default function TablaPersonas() {
     }));
   };
 
+   /**
+   * Envía un nuevo producto al servidor y actualiza la lista local
+   * @async
+   * @utilizado cuando se hace clic en el botón "Agregar producto"
+   */
   const AgregarProducto = async () => {
     try {
       const response = await fetch('http://localhost:3001/api/productos', {
@@ -76,6 +98,7 @@ export default function TablaPersonas() {
 
       alert('Producto agregado exitosamente');
 
+      // Actualiza la lista de productos con el nuevo producto
       setProductos(prev => [...prev, data.data]);
 
       // Limpiar inputs
@@ -90,6 +113,11 @@ export default function TablaPersonas() {
     }
   };
 
+  /**
+   * Activa el modo de edición para un producto específico
+   * @param {Producto} p - Producto que se va a editar
+   * @utilizado cuando se hace clic en el botón "Editar" de un producto
+   */
   const activarEdicion = (p: Producto) => {
     setModoEdicion(prev => ({...prev, [p.id]: true }));
     setProductoEditado(prev => ({
@@ -107,6 +135,14 @@ export default function TablaPersonas() {
     }));
   };
 
+  /**
+   * Actualiza un campo específico en el estado de edición de un producto
+   * @param {number} id - ID del producto que se está editando
+   * @param {keyof Producto} campo - Nombre de la propiedad a actualizar
+   * @param {any} valor - Nuevo valor para la propiedad
+   * @param {keyof Categoria} [subcampo] - Subcampo en caso de que se esté editando una propiedad de la categoría
+   * @utilizado en los campos de entrada (inputs) durante la edición de un producto
+   */
   const actualizarCampoEditado = (id: number, campo: keyof Producto, valor: any, subcampo?: keyof Categoria) => {
     setProductoEditado(prev => {
       const producto = prev[id] || {};
@@ -134,6 +170,12 @@ export default function TablaPersonas() {
     });
   };
 
+  /**
+   * Guarda los cambios de un producto editado en el servidor y actualiza la lista local
+   * @async
+   * @param {number} id - ID del producto que se está guardando
+   * @utilizado cuando se hace clic en el botón "Guardar" después de editar un producto
+   */
   const guardarCambios = async (id: number) => {
     const datos = productoEditado[id]
     try {
@@ -158,6 +200,7 @@ export default function TablaPersonas() {
         return
       }
 
+      // Actualiza el producto en la lista local
       setProductos(prev =>
         prev.map(p => (p.id === id ? { ...p, ...datos } as Producto : p))
       )
@@ -169,6 +212,12 @@ export default function TablaPersonas() {
     }
   };
 
+  /**
+   * Formatea una fecha para mostrarla en formato DD/MM/AAAA
+   * @param {string} fecha - Fecha en formato string
+   * @returns {string} Fecha formateada como DD/MM/AAAA o cadena vacía si la fecha es inválida
+   * @utilizado para mostrar las fechas en la tabla de detalles del producto
+   */
   const formatearFecha = (fecha: string): string => {
     if (!fecha) return '';
     const [anio, mes, dia] = fecha.split('-');
@@ -181,6 +230,7 @@ export default function TablaPersonas() {
         {/*LOGO*/ }  
         <h1 className={styles.logo}>Despensa</h1>
       </header>
+      {/* Formulario para agregar nuevos productos */}
       <div className={styles.addProduct}>
         <input className={styles.Input} type="text" placeholder="Nombre Producto" value={nombre} onChange={(e) => setNombre(e.target.value)}/>
         <input className={styles.Input} type="number" placeholder="Cantidad a almacenar" value={cantAlmacenada} onChange={(e) => setCantAlmacenada(e.target.value)}/>
@@ -189,6 +239,7 @@ export default function TablaPersonas() {
         <input className={styles.Input} type="text" placeholder="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)}/>
         <button className={styles.add} type="button" onClick={AgregarProducto}>Agregar producto</button>
       </div>
+      {/* Sección de filtros - Actualmente solo muestra UI sin funcionalidad */}
         <div className={styles.filtros}>
           Ordenar por
           <button className={styles.filtrado}>
@@ -198,10 +249,13 @@ export default function TablaPersonas() {
             </svg>
           </button>
         </div>
+      {/* Tabla principal que muestra los productos */}
       <table className={styles.main}>
         <tbody>
+          {/* Mapeo de productos para mostrar cada uno como una fila */}
           {productos.map(p => (
             <React.Fragment key={p.id}>
+              {/* Fila principal del producto con su nombre y botón para expandir */}
               <tr>
                 <td className={`${styles.cell} ${styles.flexRow}`}>
                   <div className={styles.nombreProducto}>
@@ -223,80 +277,90 @@ export default function TablaPersonas() {
                   </button>          
                 </td>
               </tr>
-                {visibleDetails[p.id] && (
-                  <tr className={styles.detailRow}>
-                    <td colSpan={1}>
-                      <div className={styles.detailTableWrapper}>
-                        <button className={styles.edit} type="button" onClick={() => activarEdicion(p)}>Editar</button>
-                        {modoEdicion[p.id] && (
-                          <button className={styles.save} type="button" onClick={() => guardarCambios(p.id)}>Guardar</button>
-                        )}
-                        <table className={styles.main}>
-                          <thead>
-                            <tr>
-                              <th className={styles.cellDetails}>ID</th>
-                              <th className={styles.cellDetails}>Nombre</th>
-                              <th className={styles.cellDetails}>Cantidad Almacenada</th>
-                              <th className={styles.cellDetails}>Fecha Compra</th>
-                              <th className={styles.cellDetails}>Fecha Vencimiento</th>
-                              <th className={styles.cellDetails}>Categoria</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td className={styles.cellDetails}>{p.id}</td>
-                              <td className={styles.cellDetails}>
+              {/* Detalles expandibles del producto - se muestran solo si visibleDetails[p.id] es true */}
+              {visibleDetails[p.id] && (
+                <tr className={styles.detailRow}>
+                  <td colSpan={1}>
+                    <div className={styles.detailTableWrapper}>
+                      {/* Botones para editar y guardar */}
+                      <button className={styles.edit} type="button" onClick={() => activarEdicion(p)}>Editar</button>
+                      {modoEdicion[p.id] && (
+                        <button className={styles.save} type="button" onClick={() => guardarCambios(p.id)}>Guardar</button>
+                      )}
+                      {/* Tabla de detalles del producto */}
+                      <table className={styles.main}>
+                        <thead>
+                          <tr>
+                            <th className={styles.cellDetails}>ID</th>
+                            <th className={styles.cellDetails}>Nombre</th>
+                            <th className={styles.cellDetails}>Cantidad Almacenada</th>
+                            <th className={styles.cellDetails}>Fecha Compra</th>
+                            <th className={styles.cellDetails}>Fecha Vencimiento</th>
+                            <th className={styles.cellDetails}>Categoria</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            {/* Celda de ID (no editable) */}
+                            <td className={styles.cellDetails}>{p.id}</td>
+                            {/* Celda de Nombre (editable) */}
+                            <td className={styles.cellDetails}>
+                              {modoEdicion[p.id] ? (
+                                <input type="text" value={productoEditado[p.id]?.nombre || ''} onChange={(e) => actualizarCampoEditado(p.id, 'nombre', e.target.value)}/>
+                              ) : (
+                                p.nombre
+                              )}
+                            </td>
+                            {/* Celda de Cantidad Almacenada (editable) */}
+                            <td className={styles.cellDetails}>
+                              {modoEdicion[p.id] ? (
+                                <input type="text" value={productoEditado[p.id]?.cant_almacenada || ''} onChange={(e) => actualizarCampoEditado(p.id, 'cant_almacenada', e.target.value)}/>
+                              ) : (
+                                p.cant_almacenada
+                              )}
+                            </td>
+                            {/* Celda de Fecha de Compra (editable) */}
+                            <td className={styles.cellDetails}>
+                              {modoEdicion[p.id] ? (
+                                <input type="date" value={productoEditado[p.id]?.fecha_compra ? new Date(productoEditado[p.id].fecha_compra).toISOString().substring(0, 10) : new Date(p.fecha_compra).toISOString().substring(0, 10)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_compra', e.target.value)}/>
+                              ) : (
+                                formatearFecha(p.fecha_compra.toString())
+                              )}
+                            </td>
+                            {/* Celda de Fecha de Vencimiento (editable) */}
+                            <td className={styles.cellDetails}>
+                              {modoEdicion[p.id] ? (
+                                <input type="date" value={productoEditado[p.id]?.fecha_vec ? new Date(productoEditado[p.id].fecha_vec).toISOString().substring(0, 10) : new Date(p.fecha_vec).toISOString().substring(0, 10)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_vec', e.target.value)}/>
+                              ) : (
+                                formatearFecha(p.fecha_vec.toString())
+                              )} 
+                            </td>
+                            {/* Celda de Categoría (editable) */}
+                            <td className={styles.cellDetails}>
+                              <div className={styles.categoryDetails}>
+                                {/* Campo nombre de categoría */}
                                 {modoEdicion[p.id] ? (
-                                  <input type="text" value={productoEditado[p.id]?.nombre || ''} onChange={(e) => actualizarCampoEditado(p.id, 'nombre', e.target.value)}/>
-                                ) : (
-                                  p.nombre
-                                )}
-                              </td>
-                              <td className={styles.cellDetails}>
-                                {modoEdicion[p.id] ? (
-                                  <input type="text" value={productoEditado[p.id]?.cant_almacenada || ''} onChange={(e) => actualizarCampoEditado(p.id, 'cant_almacenada', e.target.value)}/>
-                                ) : (
-                                  p.cant_almacenada
-                                )}
-                              </td>
-                              <td className={styles.cellDetails}>
-                                {modoEdicion[p.id] ? (
-                                  <input type="date" value={productoEditado[p.id]?.fecha_compra ? new Date(productoEditado[p.id].fecha_compra).toISOString().substring(0, 10) : new Date(p.fecha_compra).toISOString().substring(0, 10)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_compra', e.target.value)}/>
-                                ) : (
-                                  formatearFecha(p.fecha_compra.toString())
-                                )}
-                             </td>
-                              <td className={styles.cellDetails}>
-                                {modoEdicion[p.id] ? (
-                                  <input type="date" value={productoEditado[p.id]?.fecha_vec ? new Date(productoEditado[p.id].fecha_vec).toISOString().substring(0, 10) : new Date(p.fecha_vec).toISOString().substring(0, 10)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_vec', e.target.value)}/>
-                                ) : (
-                                  formatearFecha(p.fecha_vec.toString())
-                                )} 
-                              </td>
-                              <td className={styles.cellDetails}>
-                                <div className={styles.categoryDetails}>
-                                  {modoEdicion[p.id] ? (
-                                  <input type="text" value={productoEditado[p.id]?.categoria?.nombre ?? p.categoria.nombre} onChange={(e) => actualizarCampoEditado(p.id, 'categoria', e.target.value, 'nombre')}/>
-                                ) : (
-                                  <span>{p.categoria.nombre}</span>
-                                )}
-    
-                                {modoEdicion[p.id] ? (
-                                  <input type="text" value={productoEditado[p.id]?.categoria?.descripcion ?? p.categoria.descripcion} onChange={(e) => actualizarCampoEditado(p.id, 'categoria', e.target.value, 'descripcion')}/>
-                                ) : (
-                                  <span>{p.categoria.descripcion}</span>
-                                )}
-                                </div>
-                              </td>
-                              <td className={styles.editar}>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                                <input type="text" value={productoEditado[p.id]?.categoria?.nombre ?? p.categoria.nombre} onChange={(e) => actualizarCampoEditado(p.id, 'categoria', e.target.value, 'nombre')}/>
+                              ) : (
+                                <span>{p.categoria.nombre}</span>
+                              )}
+                              {/* Campo descripcion de categoría */}
+                              {modoEdicion[p.id] ? (
+                                <input type="text" value={productoEditado[p.id]?.categoria?.descripcion ?? p.categoria.descripcion} onChange={(e) => actualizarCampoEditado(p.id, 'categoria', e.target.value, 'descripcion')}/>
+                              ) : (
+                                <span>{p.categoria.descripcion}</span>
+                              )}
+                              </div>
+                            </td>
+                            <td className={styles.editar}>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </React.Fragment>
           ))}
         </tbody>
