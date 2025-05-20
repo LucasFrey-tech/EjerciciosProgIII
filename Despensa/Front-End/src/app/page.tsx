@@ -40,9 +40,8 @@ export default function TablaProductos() {
 
   // Estados para visibilidad del menu filtros y filtros seleccionados
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
-  const [filtroNombre, setFiltroNombre] = useState('');
-  const [filtroCategoria, setFiltroCategoria] = useState('');
-  const [ordenFecha, setOrdenFecha] = useState(false); // true para ordenar por vencimiento
+  const [productosOriginales, setProductosOriginales] = useState<Producto[]>([]);
+  const [ordenarPorVencimiento, setOrdenarPorVencimiento] = useState(false); // true para ordenar por vencimiento
 
   // Estados para la edición de productos existentes
   const [modoEdicion, setModoEdicion] = useState<{ [key: number]: boolean }>({}) // Control de modo edición por ID
@@ -57,7 +56,8 @@ export default function TablaProductos() {
       .then(res => res.json())
       .then(data => {
         console.log("Datos recibido:", data);
-        setProductos(data.data); 
+        setProductos(data.data);
+        setProductosOriginales(data.data); 
       })
       .catch(err => console.error('Error al hacer fetch:', err));
   }, []);
@@ -232,17 +232,41 @@ export default function TablaProductos() {
     return `${dia}/${mes}/${anio}`;
   };
 
-  const productosFiltrados = productos
-    .filter((p) =>
-      p.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) &&
-      p.categoria.nombre.toLowerCase().includes(filtroCategoria.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (!ordenFecha) return 0;
-      const fechaA = new Date(a.fecha_vencimiento).getTime();
-      const fechaB = new Date(b.fecha_vencimiento).getTime();
-      return fechaA - fechaB;
-    });
+  /**
+   * Ordena los productos por fecha de vencimiento (de más cercana a más lejana)
+   * y restaura el orden original según el estado actual
+   * 
+   * @function handleOrdenarPorVencimiento
+   * @description Alterna entre mostrar productos ordenados por fecha de vencimiento 
+   * y mostrarlos en su orden original. Cuando se activa, ordena los productos 
+   * de manera que se muestren los productos mas cercanos a vencer.
+   * 
+   * @requires {state} ordenarPorVencimiento - Estado booleano que indica si el filtro está activo
+   * @requires {state} productosOriginales - Estado que guarda la lista original de productos
+   * @requires {state} productos - Estado actual de productos mostrados
+   * 
+   * @modifies {state} ordenarPorVencimiento - Cambia el estado del filtro
+   * @modifies {state} productos - Actualiza la lista de productos mostrados
+ */
+  const handleOrdenarPorVencimiento = () => {
+    // Invierte el valor actual del estado
+    const nuevoEstado = !ordenarPorVencimiento;
+    setOrdenarPorVencimiento(nuevoEstado);
+    
+    if (nuevoEstado) {
+      // Si se activa el filtro, ordena los productos por fecha de vencimiento
+      // (de más cercana a más lejana)
+      const productosOrdenados = [...productos].sort((a, b) => {
+        const fechaA = new Date(a.fecha_vec).getTime();
+        const fechaB = new Date(b.fecha_vec).getTime();
+        return fechaA - fechaB; // Orden ascendente (más cercano primero)
+      });
+      setProductos(productosOrdenados);
+    } else {
+      // Si se desactiva el filtro, restaura la lista original de productos
+      setProductos(productosOriginales);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -259,28 +283,25 @@ export default function TablaProductos() {
         <input className={styles.Input} type="text" placeholder="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)}/>
         <button className={styles.add} type="button" onClick={AgregarProducto}>Agregar producto</button>
       </div>
-      {/* Sección de filtros - Actualmente solo muestra UI sin funcionalidad
+      {/* Sección de filtros - Actualmente solo aplicamos ordenar por fecha de vencimiento*/}
         <div className={styles.filtros}>
           Ordenar por
           <button className={styles.filtrado} onClick={toggleFilters}>
-            <span className={styles.tipoFiltro}>Filtro</span>
+            {/*<span className={styles.tipoFiltro}>Filtro</span>*/}
             <svg className={`${styles.flechita} ${mostrarFiltros ? styles.rotated : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fillRule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
             </svg>
           </button> 
         </div>
-        {/* Boton ordenar y muestra de filtros }
+        {/* Boton ordenar y muestra de filtros */}
           {mostrarFiltros && (
             <div className={styles.menuFiltros}>
-              <input type="text" placeholder="Filtrar por nombre" value={filtroNombre} onChange={(e) => setFiltroNombre(e.target.value)}/>
-                <input type="text" placeholder="Filtrar por categoría" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}/>
               <label>
-                <input type="checkbox" checked={ordenFecha} onChange={() => setOrdenFecha(!ordenFecha)}/>
+                <input type="checkbox" checked={ordenarPorVencimiento} onChange={() => handleOrdenarPorVencimiento()}/>
                   Ordenar por fecha de vencimiento
               </label>
             </div>
          )}
-      */}
       {/* Tabla principal que muestra los productos */}
       <table className={styles.main}>
         <tbody>
@@ -310,6 +331,7 @@ export default function TablaProductos() {
                       {modoEdicion[p.id] && (
                         <button className={styles.save} type="button" onClick={() => guardarCambios(p.id)}>Guardar</button>
                       )}
+                      {/*Nos falta implementar el boton eliminar producto*/}
                       {/* Tabla de detalles del producto */}
                       <table className={styles.main}>
                         <thead>
@@ -374,8 +396,6 @@ export default function TablaProductos() {
                                 <span>{p.categoria.descripcion}</span>
                               )}
                               </div>
-                            </td>
-                            <td className={styles.editar}>
                             </td>
                           </tr>
                         </tbody>
