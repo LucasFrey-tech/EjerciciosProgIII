@@ -38,6 +38,12 @@ export default function TablaProductos() {
   const [fechaVencimiento, setFechaVencimiento] = useState(''); // Fecha de vencimiento del nuevo producto
   const [categoria, setCategoria] = useState(''); // Categoría del nuevo producto
 
+  // Estados para visibilidad del menu filtros y filtros seleccionados
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [filtroNombre, setFiltroNombre] = useState('');
+  const [filtroCategoria, setFiltroCategoria] = useState('');
+  const [ordenFecha, setOrdenFecha] = useState(false); // true para ordenar por vencimiento
+
   // Estados para la edición de productos existentes
   const [modoEdicion, setModoEdicion] = useState<{ [key: number]: boolean }>({}) // Control de modo edición por ID
   const [productoEditado, setProductoEditado] = useState<{ [key: number]: Partial<Producto> }>({}) // Datos temporales durante edición
@@ -66,7 +72,9 @@ export default function TablaProductos() {
       ...prev,
       [id]: !prev[id]
     }));
-  };
+  }; 
+
+  const toggleFilters = () => setMostrarFiltros(!mostrarFiltros);
 
    /**
    * Envía un nuevo producto al servidor y actualiza la lista local
@@ -224,6 +232,18 @@ export default function TablaProductos() {
     return `${dia}/${mes}/${anio}`;
   };
 
+  const productosFiltrados = productos
+    .filter((p) =>
+      p.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) &&
+      p.categoria.nombre.toLowerCase().includes(filtroCategoria.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (!ordenFecha) return 0;
+      const fechaA = new Date(a.fecha_vencimiento).getTime();
+      const fechaB = new Date(b.fecha_vencimiento).getTime();
+      return fechaA - fechaB;
+    });
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>   
@@ -239,16 +259,28 @@ export default function TablaProductos() {
         <input className={styles.Input} type="text" placeholder="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)}/>
         <button className={styles.add} type="button" onClick={AgregarProducto}>Agregar producto</button>
       </div>
-      {/* Sección de filtros - Actualmente solo muestra UI sin funcionalidad */}
+      {/* Sección de filtros - Actualmente solo muestra UI sin funcionalidad
         <div className={styles.filtros}>
           Ordenar por
-          <button className={styles.filtrado}>
+          <button className={styles.filtrado} onClick={toggleFilters}>
             <span className={styles.tipoFiltro}>Filtro</span>
-            <svg className={`${styles.flechita} ${styles.rotated}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <svg className={`${styles.flechita} ${mostrarFiltros ? styles.rotated : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fillRule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
             </svg>
-          </button>
+          </button> 
         </div>
+        {/* Boton ordenar y muestra de filtros }
+          {mostrarFiltros && (
+            <div className={styles.menuFiltros}>
+              <input type="text" placeholder="Filtrar por nombre" value={filtroNombre} onChange={(e) => setFiltroNombre(e.target.value)}/>
+                <input type="text" placeholder="Filtrar por categoría" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}/>
+              <label>
+                <input type="checkbox" checked={ordenFecha} onChange={() => setOrdenFecha(!ordenFecha)}/>
+                  Ordenar por fecha de vencimiento
+              </label>
+            </div>
+         )}
+      */}
       {/* Tabla principal que muestra los productos */}
       <table className={styles.main}>
         <tbody>
@@ -262,19 +294,10 @@ export default function TablaProductos() {
                     {p.nombre}
                   </div>
                   <button onClick={() => toggleDetails(p.id)}>
-                    <svg 
-                      className={`${styles.flechita} ${visibleDetails[p.id] ? styles.rotated : ''}`} 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      viewBox="0 0 24 24" 
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd" 
-                        d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" 
-                        clipRule="evenodd" 
-                      />
+                    <svg className={`${styles.flechita} ${visibleDetails[p.id] ? styles.rotated : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fillRule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z"  clipRule="evenodd"/>
                     </svg>
-                  </button>          
+                  </button>         
                 </td>
               </tr>
               {/* Detalles expandibles del producto - se muestran solo si visibleDetails[p.id] es true */}
