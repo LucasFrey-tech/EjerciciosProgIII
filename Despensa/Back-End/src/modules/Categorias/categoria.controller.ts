@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Categoria from './categoria.model';
 
 interface CategoriaCreateBody {
+  id?: number;
   nombre?: string;
   descripcion?: string;
 }

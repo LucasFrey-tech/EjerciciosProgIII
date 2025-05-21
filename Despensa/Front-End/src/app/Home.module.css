@@ -62,6 +62,24 @@
   margin-right: 10px;
 }
 
+.delete {
+  background-color: #e74c3c; /* Rojo para indicar eliminación */
+  color: white;
+  border: solid 2px;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  align-self: flex-end;
+  width: 5%;
+  border-radius: 10px;
+}
+
+.delete:hover {
+  background-color: #c0392b; /* Color más oscuro al pasar el mouse */
+}
+
 .save{
   border: solid 2px;
   border-color: green;
@@ -82,6 +100,12 @@
 }
 
 .main input{
+  text-align: center;
+}
+
+.selectCategory{
+  color: black;
+  grid-column: 1/3;
   text-align: center;
 }
 

@@ -7,7 +7,7 @@ interface ProductoCreateBody {
   cant_almacenada: number;
   fecha_compra: Date;
   fecha_vec: Date;
-  categoria_nombre: string;
+  categoriaId: number;
 }
 
 interface ProductoUpdateBody extends Partial<ProductoCreateBody> {}
@@ -22,7 +22,7 @@ export const getAllProductos = async (
         {
           model: Categoria,
           as: 'categoria', // El alias debe coincidir con el definido en la relación
-          attributes: ['nombre', 'descripcion'], // Selecciona solo los campos que necesitas
+          attributes: ['id', 'nombre', 'descripcion'], // Selecciona solo los campos que necesitas
         },
       ],
     });
@@ -88,11 +88,9 @@ export const createProducto = async (
       });
     }
 
-    const categoriaExistente = await Categoria.findOne({
-      where: { nombre: body.categoria_nombre },
-    });
+    const categoriaExistente = await Categoria.findByPk(Number(body.categoriaId));
 
-    console.log('Categoria buscada:', body.categoria_nombre);
+    console.log('Categoria buscada:', body.categoriaId);
     console.log('Categoria encontrada:', categoriaExistente);
 
     if (!categoriaExistente) {
@@ -117,7 +115,7 @@ export const createProducto = async (
           {
             model: Categoria,
             as: 'categoria',
-            attributes: ['nombre', 'descripcion'],
+            attributes: ['id', 'nombre', 'descripcion'],
           },
         ],
       },
