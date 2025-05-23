@@ -123,7 +123,7 @@ export default function TablaProductos() {
    * @param {keyof Categoria} [subcampo] - Subcampo en caso de que se esté editando una propiedad de la categoría
    * @utilizado en los campos de entrada (inputs) durante la edición de un producto
   */
- const actualizarCampoEditado = (id: number, campo: keyof Producto, valor: any) => {
+ const actualizarCampoEditado = <K extends keyof Producto>(id: number, campo: K, valor: Producto[K]) => {
    setProductoEditado(prev => {
      const producto = prev[id] || {};
      return {
@@ -286,6 +286,12 @@ export default function TablaProductos() {
     }
   }
 
+  const obtenerFechaISO = (fecha: string | Date | undefined): string => {
+    if (!fecha) return '';
+    const date = typeof fecha === 'string' ? new Date(fecha) : fecha;
+    return date.toISOString().substring(0, 10);
+  };
+
   /**
    * Efecto que se ejecuta al montar el componente
    * Obtiene los productos desde el API y los almacena en el estado
@@ -420,7 +426,7 @@ export default function TablaProductos() {
                             {/* Celda de Cantidad Almacenada (editable) */}
                             <td className={styles.cellDetails}>
                               {modoEdicion[p.id] ? (
-                                <input type="text" value={productoEditado[p.id]?.cant_almacenada || ''} onChange={(e) => actualizarCampoEditado(p.id, 'cant_almacenada', e.target.value)}/>
+                                <input type="text" value={productoEditado[p.id]?.cant_almacenada || ''} onChange={(e) => actualizarCampoEditado(p.id, 'cant_almacenada', Number(e.target.value))}/>
                               ) : (
                                 p.cant_almacenada
                               )}
@@ -428,7 +434,7 @@ export default function TablaProductos() {
                             {/* Celda de Fecha de Compra (editable) */}
                             <td className={styles.cellDetails}>
                               {modoEdicion[p.id] ? (
-                                <input type="date" value={productoEditado[p.id]?.fecha_compra ? new Date(productoEditado[p.id].fecha_compra).toISOString().substring(0, 10) : new Date(p.fecha_compra).toISOString().substring(0, 10)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_compra', e.target.value)}/>
+                                <input type="date" value={obtenerFechaISO(productoEditado[p.id]?.fecha_compra || p.fecha_compra)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_compra', new Date(e.target.value))}/>
                               ) : (
                                 formatearFecha(p.fecha_compra.toString())
                               )}
@@ -436,7 +442,7 @@ export default function TablaProductos() {
                             {/* Celda de Fecha de Vencimiento (editable) */}
                             <td className={styles.cellDetails}>
                               {modoEdicion[p.id] ? (
-                                <input type="date" value={productoEditado[p.id]?.fecha_vec ? new Date(productoEditado[p.id].fecha_vec).toISOString().substring(0, 10) : new Date(p.fecha_vec).toISOString().substring(0, 10)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_vec', e.target.value)}/>
+                                <input type="date" value={obtenerFechaISO(productoEditado[p.id]?.fecha_vec || p.fecha_vec)} onChange={(e) => actualizarCampoEditado(p.id, 'fecha_vec', new Date(e.target.value))}/>
                               ) : (
                                 formatearFecha(p.fecha_vec.toString())
                               )} 

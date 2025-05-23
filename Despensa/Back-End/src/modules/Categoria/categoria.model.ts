@@ -1,22 +1,11 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../../database/db-config';
+import { CategoriaAttributes } from './categoria.type';
 
-interface CategoriaAttributes {
-  id: number;
-  nombre?: string;
-  descripcion?: string;
-}
-
-interface CategoriaCreacionAttributes
-  extends Optional<CategoriaAttributes, 'id'> {}
-
-class Categoria
-  extends Model<CategoriaAttributes, CategoriaCreacionAttributes>
-  implements CategoriaAttributes
-{
+export class Categoria extends Model<CategoriaAttributes> implements CategoriaAttributes {
   public id!: number;
-  public nombre?: string;
-  public descripcion?: string;
+  public nombre!: string;
+  public descripcion!: string;
 }
 
 Categoria.init(

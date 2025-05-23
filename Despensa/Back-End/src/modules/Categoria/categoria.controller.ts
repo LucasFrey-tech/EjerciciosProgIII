@@ -1,20 +1,21 @@
 import { Request, Response } from 'express';
-import Categoria from './categoria.model';
+import { CategoriaRepository } from './categoria.repository';
+import { CategoriaService } from './categoria.service';
+
+const categoriaService = new CategoriaService(new CategoriaRepository());
 
 interface CategoriaCreateBody {
-  id?: number;
-  nombre?: string;
-  descripcion?: string;
+  id: number;
+  nombre: string;
+  descripcion: string;
 }
-
-interface CategoriaUpdateBody extends Partial<CategoriaCreateBody> {}
 
 export const getAllCategorias = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
   try {
-    const categorias = await Categoria.findAll();
+    const categorias = await categoriaService.getAllCategorias();
     return res.status(200).json({ success: true, data: categorias });
   } catch (error) {
     console.error('Error al obtener los categorias:', error);
@@ -32,7 +33,7 @@ export const getCategoriaById = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const categoria = await Categoria.findByPk(req.params.id);
+    const categoria = await categoriaService.getCategoriaById(Number(req.params.id));
     if (!categoria) {
       return res.status(404).json({
         success: false,
@@ -69,7 +70,7 @@ export const createCategoria = async (
       });
     }
 
-    const nuevaCategoria = await Categoria.create(body);
+    const nuevaCategoria = await categoriaService.createCategoria(body);
     return res.status(201).json({
       success: true,
       message: 'Categoria creado exitosamente',
@@ -91,8 +92,8 @@ export const updateCategoria = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const body = req.body as CategoriaUpdateBody;
-    const categoria = await Categoria.findByPk(req.params.id);
+    const body = req.body as CategoriaCreateBody;
+    const categoria = await categoriaService.updateCategoria(Number(req.params.id), body);
 
     if (!categoria) {
       return res.status(404).json({
@@ -101,7 +102,6 @@ export const updateCategoria = async (
       });
     }
 
-    await categoria.update(body);
     return res.status(200).json({
       success: true,
       message: 'Categoria actualizado exitosamente',
@@ -126,7 +126,7 @@ export const deleteCategoria = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const categoria = await Categoria.findByPk(req.params.id);
+    const categoria = await categoriaService.deleteCategoria(Number(req.params.id));
     if (!categoria) {
       return res.status(404).json({
         success: false,
@@ -134,7 +134,6 @@ export const deleteCategoria = async (
       });
     }
 
-    await categoria.destroy();
     return res.status(200).json({
       success: true,
       message: 'Categoria eliminado exitosamente',

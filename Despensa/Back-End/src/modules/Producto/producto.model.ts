@@ -1,33 +1,15 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../../database/db-config';
 import Categoria from '../Categoria/categoria.model';
+import { ProductoAttributes } from './producto.type';
 
-interface ProductoAttributes {
-  id: number;
-  nombre?: string;
-  cant_almacenada?: number;
-  fecha_compra?: Date;
-  fecha_vec?: Date;
-  categoria_id?: number;
-  created_at?: Date;
-  updated_at?: Date;
-}
-
-interface ProductoCreacionAttributes
-  extends Optional<ProductoAttributes, 'id'> {}
-
-class Producto
-  extends Model<ProductoAttributes, ProductoCreacionAttributes>
-  implements ProductoAttributes
-{
+export class Producto extends Model<ProductoAttributes> implements ProductoAttributes {
   public id!: number;
-  public nombre?: string;
-  public cant_almacenada?: number;
-  public readonly fecha_compra!: Date;
-  public readonly fecha_vec!: Date;
-  public readonly categoria_id?: number;
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  public nombre!: string;
+  public cant_almacenada!: number;
+  public fecha_compra!: Date;
+  public fecha_vec?: Date;
+  public categoria_id!: number;
 }
 
 Producto.init(

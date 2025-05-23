@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
-import Producto from './producto.model';
-import Categoria from '../Categoria/categoria.model';
+import { ProductoRepository } from './producto.repository';
+import { ProductoService } from './producto.service';
+import { UniqueConstraintError } from 'sequelize';
+
+const productoService = new ProductoService(new ProductoRepository());
 
 interface ProductoCreateBody {
   nombre: string;
@@ -10,22 +13,12 @@ interface ProductoCreateBody {
   categoriaId: number;
 }
 
-interface ProductoUpdateBody extends Partial<ProductoCreateBody> {}
-
 export const getAllProductos = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
   try {
-    const productos = await Producto.findAll({
-      include: [
-        {
-          model: Categoria,
-          as: 'categoria', // El alias debe coincidir con el definido en la relación
-          attributes: ['id', 'nombre', 'descripcion'], // Selecciona solo los campos que necesitas
-        },
-      ],
-    });
+    const productos = await productoService.getAllProductos();
     return res.status(200).json({ success: true, data: productos });
   } catch (error) {
     console.error('Error al obtener los productos:', error);
@@ -43,7 +36,7 @@ export const getProductoById = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const producto = await Producto.findByPk(req.params.id);
+    const producto = await productoService.getProductoById(Number(req.params.id));
     if (!producto) {
       return res.status(404).json({
         success: false,
@@ -77,51 +70,13 @@ export const createProducto = async (
       });
     }
 
-    const existente = await Producto.findOne({
-      where: { nombre: body.nombre },
-    });
-
-    if (existente) {
-      return res.status(400).json({
-        success: false,
-        message: 'Ya existe un producto con ese nombre.',
-      });
-    }
-
-    const categoriaExistente = await Categoria.findByPk(Number(body.categoriaId));
-
-    console.log('Categoria buscada:', body.categoriaId);
-    console.log('Categoria encontrada:', categoriaExistente);
-
-    if (!categoriaExistente) {
-      return res.status(400).json({
-        success: false,
-        message: 'La categoría no existe. Por favor, créala primero.',
-      });
-    }
-
-    const nuevoProducto = await Producto.create({
+    const nuevoProducto = await productoService.createProducto({
       nombre: body.nombre,
       cant_almacenada: body.cant_almacenada,
       fecha_compra: body.fecha_compra,
       fecha_vec: body.fecha_vec,
-      categoria_id: categoriaExistente.dataValues.id,
+      categoria_id: body.categoriaId,
     });
-
-    console.log('Producto creado:', JSON.stringify(nuevoProducto, null, 2));
-
-    const productoConCategoria = await Producto.findByPk(nuevoProducto.dataValues.id, {
-        include: [
-          {
-            model: Categoria,
-            as: 'categoria',
-            attributes: ['id', 'nombre', 'descripcion'],
-          },
-        ],
-      },
-    );
-
-    console.log('Respuesta enviada:', JSON.stringify(productoConCategoria?.toJSON(), null, 2));
 
     return res.status(201).json({
       success: true,
@@ -130,7 +85,7 @@ export const createProducto = async (
     });
   } catch (error) {
     console.error('Error al crear el producto:', error);
-    if ((error as any).code === '23505') {
+    if (error instanceof UniqueConstraintError) {
       return res.status(400).json({
         success: false,
         message: 'Ya existe un producto con ese nombre.',
@@ -139,7 +94,7 @@ export const createProducto = async (
 
     return res.status(500).json({
       success: false,
-      message: 'Error al crear el producto',
+      message: 'Error al crear el producto:',
       error: (error as Error).message,
     });
   }
@@ -151,8 +106,8 @@ export const updateProducto = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const body = req.body as ProductoUpdateBody;
-    const producto = await Producto.findByPk(req.params.id);
+    const body = req.body as ProductoCreateBody;
+    const producto = await productoService.updateProducto(Number(req.params.id), body);
 
     if (!producto) {
       return res.status(404).json({
@@ -161,7 +116,6 @@ export const updateProducto = async (
       });
     }
 
-    await producto.update(body);
     return res.status(200).json({
       success: true,
       message: 'Producto actualizado exitosamente',
@@ -186,15 +140,14 @@ export const deleteProducto = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const producto = await Producto.findByPk(req.params.id);
-    if (!producto) {
+    const success = await productoService.deleteProducto(Number(req.params.id));
+    if (!success) {
       return res.status(404).json({
         success: false,
         message: 'Producto no encontrado',
       });
     }
 
-    await producto.destroy();
     return res.status(200).json({
       success: true,
       message: 'Producto eliminado exitosamente',
