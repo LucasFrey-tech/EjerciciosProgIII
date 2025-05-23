@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Producto from './producto.model';
-import Categoria from '../Categorias/categoria.model';
+import Categoria from '../Categoria/categoria.model';
 
 interface ProductoCreateBody {
   nombre: string;

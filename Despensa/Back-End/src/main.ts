@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import * as express from 'express';
 import { testConnection } from '../database/db-config';
-import productoRoutes from './modules/Productos/producto.routes';
+import productoRoutes from './modules/Producto/producto.routes';
 import * as cors from 'cors';
 import './modules/relaciones.model';
-import categoriaRoutes from './modules/Categorias/categoria.routes';
+import categoriaRoutes from './modules/Categoria/categoria.routes';
 
 // Tipos para el manejo de errores
 interface AppError extends Error {
