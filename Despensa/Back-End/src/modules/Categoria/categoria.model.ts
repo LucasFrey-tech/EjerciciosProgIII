@@ -1,33 +1,21 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../../database/db-config';
-import { CategoriaAttributes } from './categoria.type';
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { Producto } from '../Producto/producto.model';
+@Table({ tableName: 'Categorias', timestamps: false })
+export class Categoria extends Model<Categoria> {
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  nombre: string;
 
-export class Categoria extends Model<CategoriaAttributes> implements CategoriaAttributes {
-  public id!: number;
-  public nombre!: string;
-  public descripcion!: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  descripcion: string;
+
+  @HasMany(() => Producto)
+  productos: Producto[];
 }
-
-Categoria.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    nombre: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    descripcion: {
-      type: DataTypes.STRING,
-    },
-  },
-  {
-    tableName: 'categoria',
-    sequelize,
-    timestamps: false,
-  },
-);
-
-export default Categoria;

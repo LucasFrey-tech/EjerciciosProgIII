@@ -1,13 +1,21 @@
-import { Categoria } from '../relaciones.model';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { Producto } from './producto.model';
-import { ProductoAttributes } from './producto.type';
+import { Categoria } from '../Categoria/categoria.model';
+import { ProductoAttributes } from '../../types/producto.type';
 
+@Injectable()
 export class ProductoRepository {
+  constructor(
+    @InjectModel(Producto) private productoModel: typeof Producto,
+    @InjectModel(Categoria) private categoriaModel: typeof Categoria,
+  ) {}
+
   async getAll(): Promise<Producto[]> {
-    return await Producto.findAll({
+    return await this.productoModel.findAll({
       include: [
         {
-          model: Categoria,
+          model: this.categoriaModel,
           as: 'categoria',
           attributes: ['id', 'nombre', 'descripcion'],
         },
@@ -16,10 +24,10 @@ export class ProductoRepository {
   }
 
   async findById(id: number): Promise<Producto | null>{
-    return await Producto.findByPk(id, {
+    return await this.productoModel.findByPk(id, {
       include: [
         {
-          model: Categoria,
+          model: this.categoriaModel,
           as: 'categoria',
           attributes: ['id', 'nombre', 'descripcion'],
         },
@@ -28,22 +36,22 @@ export class ProductoRepository {
   }
 
   async findByName(nombre: string): Promise<Producto | null> {
-    return await Producto.findOne({ where: { nombre } });
+    return await this.productoModel.findOne({ where: { nombre } });
   }
 
   async findCategoriaById(categoriaId: number): Promise<Categoria | null> {
-    return await Categoria.findByPk(categoriaId);
+    return await this.categoriaModel.findByPk(categoriaId);
   }
 
   async create(data: ProductoAttributes): Promise<Producto> {
-    return await Producto.create(data);
+    return await this.productoModel.create(data);
   }
 
   async findByIdWithCategoria(id: number): Promise<Producto | null> {
-    return await Producto.findByPk(id, {
+    return await this.productoModel.findByPk(id, {
       include: [
         {
-          model: Categoria,
+          model: this.categoriaModel,
           as: 'categoria',
           attributes: ['id', 'nombre', 'descripcion'],
         },
@@ -52,13 +60,13 @@ export class ProductoRepository {
   }
 
   async update(id: number, data: Partial<ProductoAttributes>): Promise<Producto | null> {
-    const producto = await Producto.findByPk(id);
+    const producto = await this.productoModel.findByPk(id);
     if (!producto) return null;
     return await producto.update(data);
   }
 
   async delete(id: number): Promise<boolean> {
-    const producto = await Producto.findByPk(id);
+    const producto = await this.productoModel.findByPk(id);
     if (!producto) return false;
     await producto.destroy();
     return true;

@@ -1,14 +1,16 @@
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CategoriaRepository } from './categoria.repository';
-import { CategoriaAttributes } from './categoria.type';
+import { CategoriaAttributes } from '../../types/categoria.type';
 import { Producto } from '../Producto/producto.model';
 
+@Injectable()
 export class CategoriaService {
   constructor(private repository: CategoriaRepository) {}
 
   // Validaciones
   private async validateCamposRequeridos(nombre: string, descripcion: string): Promise<void> {
     if (!nombre || !descripcion) {
-      throw new Error('Se requiere nombre y descripción para la categoría.');
+      throw new BadRequestException('Se requiere nombre y descripción para la categoría.');
     }
     return Promise.resolve();
   }
@@ -16,14 +18,14 @@ export class CategoriaService {
   private async validateNombreUnico(nombre: string, id?: number): Promise<void> {
     const existente = await this.repository.findByName(nombre);
     if (existente && (!id || existente.id !== id)) {
-      throw new Error('Ya existe una categoría con ese nombre.');
+      throw new BadRequestException('Ya existe una categoría con ese nombre.');
     }
   }
 
   private async validateNoProductosAsignados(categoriaId: number): Promise<void> {
     const productos = await Producto.findAll({ where: { categoria_id: categoriaId } });
     if (productos.length > 0) {
-      throw new Error('No se puede eliminar la categoría porque tiene productos asociados.');
+      throw new BadRequestException('No se puede eliminar la categoría porque tiene productos asociados.');
     }
   }
 

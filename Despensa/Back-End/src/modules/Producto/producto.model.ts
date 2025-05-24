@@ -1,17 +1,45 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../../database/db-config';
-import Categoria from '../Categoria/categoria.model';
-import { ProductoAttributes } from './producto.type';
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+import { Table,  Model , ForeignKey, DataType, Column, BelongsTo} from 'sequelize-typescript';
+import { Categoria } from '../Categoria/categoria.model';
 
-export class Producto extends Model<ProductoAttributes> implements ProductoAttributes {
-  public id!: number;
-  public nombre!: string;
-  public cant_almacenada!: number;
-  public fecha_compra!: Date;
-  public fecha_vec?: Date;
-  public categoria_id!: number;
+@Table({ tableName: 'Producto', timestamps: false })
+export class Producto extends Model<Producto> {
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  nombre: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  cant_almacenada: number;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  fecha_compra: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  fecha_vec: Date;
+
+  @ForeignKey(() => Categoria)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  categoria_id: number;
+
+  @BelongsTo(() => Categoria)
+  categoria: Categoria;
 }
-
+/*
 Producto.init(
   {
     id: {
@@ -48,5 +76,5 @@ Producto.init(
     updatedAt: 'updated_at',
   },
 );
-
+*/
 export default Producto;

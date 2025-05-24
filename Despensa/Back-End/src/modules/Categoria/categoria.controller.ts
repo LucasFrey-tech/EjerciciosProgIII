@@ -1,8 +1,5 @@
-import { Request, Response } from 'express';
-import { CategoriaRepository } from './categoria.repository';
+import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
-
-const categoriaService = new CategoriaService(new CategoriaRepository());
 
 interface CategoriaCreateBody {
   id: number;
@@ -10,143 +7,84 @@ interface CategoriaCreateBody {
   descripcion: string;
 }
 
-export const getAllCategorias = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const categorias = await categoriaService.getAllCategorias();
-    return res.status(200).json({ success: true, data: categorias });
-  } catch (error) {
-    console.error('Error al obtener los categorias:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error al obtener los categorias',
-      error: (error as Error).message,
-    });
-  }
-};
+@Controller('categorias')
+export class CategoriaController {
+  constructor(private readonly categoriaService: CategoriaService) {}
 
-// Obtener un categoria por ID
-export const getCategoriaById = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const categoria = await categoriaService.getCategoriaById(Number(req.params.id));
-    if (!categoria) {
-      return res.status(404).json({
-        success: false,
-        message: 'Categoria no encontrado',
-      });
+  @Get()
+  async getAllCategorias() {
+    try {
+      const categorias = await this.categoriaService.getAllCategorias();
+      return { success: true, data: categorias };
+    } catch (error) {
+      throw new NotFoundException(`Error al obtener las categorías: ${(error as Error).message}`);
     }
-    return res.status(200).json({ success: true, data: categoria });
-  } catch (error) {
-    console.error(
-      `Error al obtener la categoria con ID ${req.params.id}:`,
-      error,
-    );
-    return res.status(500).json({
-      success: false,
-      message: 'Error al obtener categoria',
-      error: (error as Error).message,
-    });
   }
-};
 
-// Crear un nuevo categoria
-export const createCategoria = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const body = req.body as CategoriaCreateBody;
-
-    // Validación básica
-    if (!body.nombre) {
-      return res.status(400).json({
-        success: false,
-        message: 'Se requiere nombre del categoria.',
-      });
+  // Obtener un categoria por ID
+  @Get(':id')
+  async getCategoriaById(@Param('id') id: string) {
+    try {
+      const categoria = await this.categoriaService.getCategoriaById(Number(id));
+      if (!categoria) {
+        throw new NotFoundException('Categoría no encontrada');
+      }
+      return { success: true, data: categoria };
+    } catch (error) {
+      throw new NotFoundException(`Error al obtener la categoría con ID ${id}: ${(error as Error).message}`);
     }
-
-    const nuevaCategoria = await categoriaService.createCategoria(body);
-    return res.status(201).json({
-      success: true,
-      message: 'Categoria creado exitosamente',
-      data: nuevaCategoria,
-    });
-  } catch (error) {
-    console.error('Error al crear el categoria:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error al crear el categoria',
-      error: (error as Error).message,
-    });
   }
-};
 
-//Actualizar un categoria existente
-export const updateCategoria = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const body = req.body as CategoriaCreateBody;
-    const categoria = await categoriaService.updateCategoria(Number(req.params.id), body);
-
-    if (!categoria) {
-      return res.status(404).json({
-        success: false,
-        message: 'Categoria no encontrado',
-      });
+  // Crear un nuevo categoria
+  @Post()
+  async createCategoria(@Body() body: CategoriaCreateBody) {
+    try {
+      if (!body.nombre) {
+        throw new BadRequestException('Se requiere nombre de la categoría.');
+      }
+      const nuevaCategoria = await this.categoriaService.createCategoria(body);
+      return {
+        success: true,
+        message: 'Categoría creada exitosamente',
+        data: nuevaCategoria,
+      };
+    } catch (error) {
+      throw new BadRequestException(`Error al crear la categoría: ${(error as Error).message}`);
     }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Categoria actualizado exitosamente',
-      data: categoria,
-    });
-  } catch (error) {
-    console.error(
-      `Error al actualizar categoria con ID ${req.params.id}:`,
-      error,
-    );
-    return res.status(500).json({
-      success: false,
-      message: 'Error al actualizar categoria',
-      error: (error as Error).message,
-    });
   }
-};
 
-// Eliminar un categoria
-export const deleteCategoria = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const categoria = await categoriaService.deleteCategoria(Number(req.params.id));
-    if (!categoria) {
-      return res.status(404).json({
-        success: false,
-        message: 'Categoria no encontrado',
-      });
+  //Actualizar un categoria existente
+  @Put(':id')
+  async updateCategoria(@Param('id') id: string, @Body() body: CategoriaCreateBody) {
+    try {
+      const categoria = await this.categoriaService.updateCategoria(Number(id), body);
+      if (!categoria) {
+        throw new NotFoundException('Categoría no encontrada');
+      }
+      return {
+        success: true,
+        message: 'Categoría actualizada exitosamente',
+        data: categoria,
+      };
+    } catch (error) {
+      throw new NotFoundException(`Error al actualizar la categoría con ID ${id}: ${(error as Error).message}`);
     }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Categoria eliminado exitosamente',
-    });
-  } catch (error) {
-    console.error(
-      `Error al eliminar categoria con ID ${req.params.id}:`,
-      error,
-    );
-    return res.status(500).json({
-      success: false,
-      message: 'Error al eliminar categoria',
-      error: (error as Error).message,
-    });
   }
-};
+
+  // Eliminar un categoria
+  @Delete(':id')
+  async deleteCategoria(@Param('id') id: string) {
+    try {
+      const success = await this.categoriaService.deleteCategoria(Number(id));
+      if (!success) {
+        throw new NotFoundException('Categoría no encontrada');
+      }
+      return {
+        success: true,
+        message: 'Categoría eliminada exitosamente',
+      };
+    } catch (error) {
+      throw new NotFoundException(`Error al eliminar la categoría con ID ${id}: ${(error as Error).message}`);
+    }
+  }
+}

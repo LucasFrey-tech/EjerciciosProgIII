@@ -14,8 +14,12 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true, // Cambiado a true para forzar tipos explícitos
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "moduleResolution": "node", // Añadido para resolver módulos
+    "esModuleInterop": true // Añadido para compatibilidad con módulos
+  },
+  "include": ["src/**/*"], // Añadido para incluir todos los archivos en src
+  "exclude": ["node_modules", "dist"]
 }
