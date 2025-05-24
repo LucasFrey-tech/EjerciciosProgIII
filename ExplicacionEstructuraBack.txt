@@ -1,0 +1,25 @@
+Despensa/
+├── Back-End/
+│   ├── app.module.ts // Es el módulo raíz de la aplicación Nest.js, que configura la conexión a la base de datos con Sequelize e importa los módulos Producto y Categoria para que sus controladores y servicios estén disponibles.
+│   ├── db-config.ts // Es un archivo de configuración que establece la conexión a la base de datos PostgreSQL usando Sequelize, incluyendo credenciales y opciones, y proporciona una función testConnection para verificar la conexión.
+│   ├── env.d.ts // Es un archivo de declaración de tipos para TypeScript que define variables de entorno (como process.env.PORT) para que sean reconocidas en el proyecto.
+│   ├── init.sql // Es un script SQL inicial que define las tablas y esquemas de la base de datos (como Categorias y Productos) para su creación o inicialización.
+│   ├── main.ts // Es el punto de entrada de la aplicación Nest.js, donde se inicializa el servidor con NestFactory, se configuran CORS y prefijos globales, y se verifica la conexión a la base de datos antes de escuchar en el puerto especificado.
+│   ├── node_modules/ // Es la carpeta que contiene las dependencias instaladas del proyecto, gestionadas por npm
+│   └── src/
+│       ├── modules/
+│       │   ├── Categoria/
+│       │   │   ├── categoria.controller.ts // Es el controlador de Nest.js que maneja las rutas HTTP para las categorías (GET /api/categorias, POST /api/categorias, etc.), definiendo endpoints y llamando al servicio correspondiente.
+│       │   │   ├── categoria.model.ts // Es el modelo Sequelize que define la estructura de la tabla Categorias en la base de datos, incluyendo columnas como id, nombre, descripcion y la relación HasMany con Productos.
+│       │   │   ├── categoria.module.ts // Es el módulo de Nest.js que agrupa los componentes de Categoria (controlador, servicio, repositorio) y registra el modelo Categoria con Sequelize para su uso.
+│       │   │   ├── categoria.repository.ts // Es el repositorio que encapsula las operaciones de base de datos para las categorías, usando Sequelize para consultas como findAll, create, update y delete.
+│       │   │   └── categoria.service.ts // Es el servicio de Nest.js que contiene la lógica de negocio para las categorías, incluyendo validaciones (como nombre único) y coordinación de operaciones CRUD con el repositorio.
+│       │   ├── Producto/
+│       │   │   ├── producto.controller.ts // Es el controlador de Nest.js que maneja las rutas HTTP para los productos (GET /api/productos, POST /api/productos, etc.), definiendo endpoints y llamando al servicio correspondiente.
+│       │   │   ├── producto.model.ts // Es el modelo Sequelize que define la estructura de la tabla Productos en la base de datos, incluyendo columnas como id, nombre, categoria_id y la relación BelongsTo con Categorias.
+│       │   │   ├── producto.module.ts // Es el módulo de Nest.js que agrupa los componentes de Producto (controlador, servicio, repositorio) y registra el modelo Producto con Sequelize para su uso.
+│       │   │   ├── producto.repository.ts // Es el repositorio que encapsula las operaciones de base de datos para los productos, usando Sequelize para consultas como findAll, create, update y delete, incluyendo relaciones con Categorias.
+│       │   │   └── producto.service.ts // Es el servicio de Nest.js que contiene la lógica de negocio para los productos, incluyendo validaciones (como nombre único, cantidad válida) y coordinación de operaciones CRUD con el repositorio.
+│       ├── types/
+│       │   ├── categoria.type.ts // Es un archivo de tipos que define la interfaz CategoriaAttributes para tipar los datos de las categorías, facilitando la consistencia en el código (por ejemplo, id, nombre, descripcion).
+│       │   └── producto.type.ts // Es un archivo de tipos que define la interfaz ProductoAttributes para tipar los datos de los productos, facilitando la consistencia en el código (por ejemplo, id, nombre, categoria_id).
