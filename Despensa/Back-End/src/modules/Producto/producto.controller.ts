@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ProductoService } from './producto.service';
-import { UniqueConstraintError } from 'sequelize';
+import { CreationAttributes, UniqueConstraintError } from 'sequelize';
+import { Producto } from './producto.model';
 
-interface ProductoCreateBody {
+interface ProductoCreateBody extends CreationAttributes<Producto> {
   nombre: string;
   cant_almacenada: number;
   fecha_compra: Date;
@@ -20,7 +21,7 @@ export class ProductoController {
       const productos = await this.productoService.getAllProductos();
       return { success: true, data: productos };
     } catch (error) {
-      throw new HttpStatus(HttpStatus.INTERNAL_SERVER_ERROR, `Error al obtener los productos: ${(error as Error).message}`);
+      throw new HttpException(`Error al obtener los productos: ${(error as Error).message}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -33,7 +34,7 @@ export class ProductoController {
       }
       return { success: true, data: producto };
     } catch (error) {
-      throw new HttpStatus(HttpStatus.INTERNAL_SERVER_ERROR, `Error al obtener producto con ID ${id}: ${(error as Error).message}`);
+      throw new HttpException(`Error al obtener producto con ID ${id}: ${(error as Error).message}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -43,13 +44,7 @@ export class ProductoController {
       if (!body.nombre) {
         throw new BadRequestException('Se requiere nombre del producto.');
       }
-      const nuevoProducto = await this.productoService.createProducto({
-        nombre: body.nombre,
-        cant_almacenada: body.cant_almacenada,
-        fecha_compra: body.fecha_compra,
-        fecha_vec: body.fecha_vec,
-        categoria_id: body.categoria_id,
-      });
+      const nuevoProducto = await this.productoService.createProducto(body);
       return {
         success: true,
         message: 'Producto creado exitosamente',
@@ -59,7 +54,7 @@ export class ProductoController {
       if (error instanceof UniqueConstraintError) {
         throw new BadRequestException('Ya existe un producto con ese nombre.');
       }
-      throw new HttpStatus(HttpStatus.INTERNAL_SERVER_ERROR, `Error al crear el producto: ${(error as Error).message}`);
+      throw new HttpException(`Error al crear el producto: ${(error as Error).message}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -76,7 +71,7 @@ export class ProductoController {
         data: producto,
       };
     } catch (error) {
-      throw new HttpStatus(HttpStatus.INTERNAL_SERVER_ERROR, `Error al actualizar producto con ID ${id}: ${(error as Error).message}`);
+      throw new HttpException(`Error al actualizar producto con ID ${id}: ${(error as Error).message}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -92,7 +87,7 @@ export class ProductoController {
         message: 'Producto eliminado exitosamente',
       };
     } catch (error) {
-      throw new HttpStatus(HttpStatus.INTERNAL_SERVER_ERROR, `Error al eliminar producto con ID ${id}: ${(error as Error).message}`);
+      throw new HttpException(`Error al eliminar producto con ID ${id}: ${(error as Error).message}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

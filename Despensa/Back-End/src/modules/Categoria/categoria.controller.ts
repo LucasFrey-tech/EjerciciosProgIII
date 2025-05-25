@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
+import { CategoriaAttributes } from 'src/types/categoria.type';
 
-interface CategoriaCreateBody {
+interface CategoriaCreateBody extends CategoriaAttributes {
   id: number;
   nombre: string;
   descripcion: string;

@@ -5,9 +5,7 @@ import { CategoriaAttributes } from '../../types/categoria.type';
 
 @Injectable()
 export class CategoriaRepository {
-  constructor(
-    @InjectModel(Categoria) private categoriaModel: typeof Categoria,
-  ) {}
+  constructor(@InjectModel(Categoria) private categoriaModel: typeof Categoria) {}
 
   async getAll(): Promise<Categoria[]> {
     return await this.categoriaModel.findAll();

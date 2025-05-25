@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
+import { SequelizeOptions } from 'sequelize-typescript';
 
-const sequelize = new Sequelize({
+const sequelizeOptions: SequelizeOptions = {
   database: process.env.DB_NAME || 'despensa',
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'admin123',
@@ -14,7 +15,9 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000,
   },
-});
+};
+
+const sequelize = new Sequelize(sequelizeOptions);
 
 const testConnection = async (): Promise<void> => {
   try {
@@ -25,4 +28,4 @@ const testConnection = async (): Promise<void> => {
   }
 };
 
-export { sequelize, testConnection };
+export { sequelize, testConnection, sequelizeOptions };
